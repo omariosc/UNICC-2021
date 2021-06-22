@@ -1,8 +1,6 @@
+import sys
 import xlsxwriter
 import pyexcel as pe
-
-contentSourcePath = "C:\\Users\\omarc\\Documents\\UNICC 2021\\URM Physical Items\\URM-PhysicalItemsSourcePost-A_01JAN-14FEB_20210622.xlsx"
-contentTargetPath = "C:\\Users\\omarc\\Documents\\UNICC 2021\\URM Physical Items\\URM-PhysicalItemsTargetPost-A_01JAN-14FEB_20210622.xlsx"
 
 # Writes headings to xlsx workbook
 def write_headings(worksheet):
@@ -22,15 +20,23 @@ def format_line(line):
   return line
 
 def main():
+  # Gets source and target files from command line arguments
+  content_source_path = content_target_path = ""
+  try:
+    content_source_path = sys.argv[1]
+    content_target_path = sys.argv[2]
+  except IndexError:
+    print("Usage: python physicalitems_diff.py <SOURCE FILEPATH> <TARGET FILEPATH>")
+    sys.exit(1)
   # Creates xlsx workbook and worksheet and writes headings
-  workbook = xlsxwriter.Workbook((contentSourcePath.replace("Source", "")).replace(".xlsx", "_Diff.xlsx"))
+  workbook = xlsxwriter.Workbook((content_source_path.replace("Source", "")).replace(".xlsx", "_Diff.xlsx"))
   worksheet = workbook.add_worksheet()
   write_headings(worksheet)
   # Sets initial row and column for worksheet
   row = 1
   # Reads content source and target data from xlsx workbook
-  source_content = pe.get_array(file_name=contentSourcePath)
-  target_content = pe.get_array(file_name=contentTargetPath)
+  source_content = pe.get_array(file_name=content_source_path)
+  target_content = pe.get_array(file_name=content_target_path)
   # Iterates source and target files line by line
   for source_line, target_line in zip(source_content, target_content):
     # Formats source and target lines
