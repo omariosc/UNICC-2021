@@ -30,7 +30,7 @@ def main():
   try:
     old_prd_data_path = sys.argv[1]
     new_prd_data_path = sys.argv[2]
-    # qa_data_path = sys.argv[3]
+    qa_data_path = sys.argv[3]
   except IndexError:
     print("Usage: python physicalitems_diff.py <OLD PRD DATA FILEPATH> <NEW PRD DATA FILEPATH> <QA DATA FILEPATH")
     sys.exit(1)
@@ -43,11 +43,13 @@ def main():
   # Reads content source and target data from xlsx workbook
   source_content = pe.get_array(file_name=old_prd_data_path)
   target_content = pe.get_array(file_name=new_prd_data_path)
+  qa_content = pe.get_array(file_name=qa_data_path)
   # Iterates source and target files line by line
-  for source_line, target_line in zip(source_content, target_content):
+  for source_line, target_line, qa_line in zip(source_content, target_content, qa_content):
     # Formats source and target lines
     source_line = format_line(source_line)
     target_line = format_line(target_line)
+    qa_line = format_line(qa_line)
     # If lines are different
     if source_line != target_line:
       # Writes record id to worksheet
@@ -55,14 +57,15 @@ def main():
       # Counter for field index
       field_index = 0
       # Iterates through data cells in line
-      for source_cell, target_cell in zip(source_line, target_line):
+      for source_cell, target_cell, qa_cell in zip(source_line, target_line, qa_line):
         # If cells are different
         if source_cell != target_cell:
           # Writes field name to worksheet
           worksheet.write(row, 1, target_content[0][field_index])
-          # Writes source and target data to worksheet
+          # Writes source, target and qa data to worksheet
           worksheet.write(row, 2, source_cell)
           worksheet.write(row, 3, target_cell)
+          worksheet.write(row, 4, qa_cell)
           row += 1
         # Increments field index
         field_index += 1
