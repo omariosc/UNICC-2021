@@ -4,7 +4,7 @@ import pyexcel as pe
 
 # Writes headings to xlsx workbook
 def write_headings(worksheet):
-  headings = ["DDOCNAME", "DIFFERENT FIELDS", "SOURCE DATA", "TARGET DATA"]
+  headings = ["DDOCNAME", "DIFFERENT FIELDS", "OLD PRD DATA", "NEW PRD DATA", "QA DATA"]
   col = 0
   for heading in headings:
     worksheet.write(0, col, heading)
@@ -12,31 +12,37 @@ def write_headings(worksheet):
 
 # Formats content line
 def format_line(line):
-  for data in line:
-    data = str(data)
-    if len(data) > 0:
-      if data[0] == ' ': data = data[1:]
-      if data[-1] == ' ': data = data[:-1]
+  for i in range(len(line)):
+    try:
+      # Checks for space from start of string
+      while line[i][0] == " ":
+        line[i] = line[i][1:]
+      # Checks for space from end of string
+      while line[i][-1] == " ":
+        line[i] = line[i][:-1]
+    except (TypeError, IndexError):
+      pass
   return line
 
 def main():
   # Gets source and target files from command line arguments
-  content_source_path = content_target_path = ""
+  old_prd_data_path = new_prd_data_path = ""
   try:
-    content_source_path = sys.argv[1]
-    content_target_path = sys.argv[2]
+    old_prd_data_path = sys.argv[1]
+    new_prd_data_path = sys.argv[2]
+    # qa_data_path = sys.argv[3]
   except IndexError:
-    print("Usage: python physicalitems_diff.py <SOURCE FILEPATH> <TARGET FILEPATH>")
+    print("Usage: python physicalitems_diff.py <OLD PRD DATA FILEPATH> <NEW PRD DATA FILEPATH> <QA DATA FILEPATH")
     sys.exit(1)
   # Creates xlsx workbook and worksheet and writes headings
-  workbook = xlsxwriter.Workbook((content_source_path.replace("Source", "")).replace(".xlsx", "_Diff.xlsx"))
-  worksheet = workbook.add_worksheet()
+  workbook = xlsxwriter.Workbook((old_prd_data_path.replace("Source", "")).replace(".xlsx", "_Diff.xlsx"))
+  worksheet = workbook.add_worksheet("PhysicalDataDiff")
   write_headings(worksheet)
   # Sets initial row and column for worksheet
   row = 1
   # Reads content source and target data from xlsx workbook
-  source_content = pe.get_array(file_name=content_source_path)
-  target_content = pe.get_array(file_name=content_target_path)
+  source_content = pe.get_array(file_name=old_prd_data_path)
+  target_content = pe.get_array(file_name=new_prd_data_path)
   # Iterates source and target files line by line
   for source_line, target_line in zip(source_content, target_content):
     # Formats source and target lines
