@@ -35,7 +35,7 @@ def main():
     print("Usage: python physicalitems_diff.py <OLD PRD DATA FILEPATH> <NEW PRD DATA FILEPATH> <QA DATA FILEPATH")
     sys.exit(1)
   # Creates xlsx workbook and worksheet and writes headings
-  workbook = xlsxwriter.Workbook((old_prd_data_path.replace("Source", "")).replace(".xlsx", "_Diff.xlsx"))
+  workbook = xlsxwriter.Workbook((old_prd_data_path.replace("OLDPRD", "")).replace(".xlsx", "_Diff.xlsx"))
   worksheet = workbook.add_worksheet("PhysicalDataDiff")
   write_headings(worksheet)
   # Sets initial row and column for worksheet
