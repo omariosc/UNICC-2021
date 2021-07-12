@@ -32,13 +32,13 @@ def main():
     new_prd_data_path = sys.argv[2]
     qa_data_path = sys.argv[3]
   except IndexError:
-    print("Usage: python physicalitems_diff.py <OLD PRD DATA FILEPATH> <NEW PRD DATA FILEPATH> <QA DATA FILEPATH")
+    print("Usage: python physicalitems_diff.py <OLD PRD DATA FILEPATH> <NEW PRD DATA FILEPATH> <QA DATA FILEPATH>")
     sys.exit(1)
   # Creates xlsx workbook and worksheet and writes headings
   workbook = xlsxwriter.Workbook((old_prd_data_path.replace("OLDPRD", "")).replace(".xlsx", "_Diff.xlsx"))
   worksheet = workbook.add_worksheet("PhysicalDataDiff")
   write_headings(worksheet)
-  # Sets initial row and column for worksheet
+  # Sets initial row for worksheet
   row = 1
   # Reads content source and target data from xlsx workbook
   source_content = pe.get_array(file_name=old_prd_data_path)
